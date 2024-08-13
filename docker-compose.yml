@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  bank-service:
+    build:
+      context: ./BankService
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - my-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/bank_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=niveabi23
+    depends_on:
+      - user-service
+
+  user-service:
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - my-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/user_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=niveabi23
+
+#  api-gateway:
+#    build:
+#      context: ./ApiGateWay
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - my-network
+#    depends_on:
+#      - bank-service
+#      - user-service
+#    environment:
+#      # If api-gateway does not use a database, you can safely omit the following:
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/api_gateway_db
+#      - SPRING_DATASOURCE_USERNAME=root
+#      - SPRING_DATASOURCE_PASSWORD=niveabi23
+#      - SPRING_PROFILES_ACTIVE=none  # Disables any profiles that may try to configure a DataSource
+
+
+networks:
+  my-network:
+    driver: bridge
